@@ -6,6 +6,7 @@ gameApp.controller('gameController', ['$scope', '$timeout', function($scope, $ti
 		
 	$scope.blanka = null;
 	$scope.ryu = null;
+	$scope.ryuPunch = null;
 		
 	$scope.draw = function() {
 		
@@ -18,7 +19,7 @@ gameApp.controller('gameController', ['$scope', '$timeout', function($scope, $ti
 	}
 	
 	$scope.detectCollision = function(spriteA, spriteB) {
-		return spriteA.x + spriteA.width >= spriteB.x && spriteA.x <= spriteB.x + spriteB.width;
+		return spriteA.x + spriteA.width() >= spriteB.x && spriteA.x <= spriteB.x + spriteB.width();
 	}
 	
 	$scope.keydown = function(event) {
@@ -52,13 +53,33 @@ gameApp.controller('gameController', ['$scope', '$timeout', function($scope, $ti
 	};
 	
 	$scope.load = function() {
-		$scope.blanka = new sprite('img/blanka.gif', 70, 120, 200);
-		$scope.ryu = new sprite('img/ryu.gif', 50, 100, 10);
+		$scope.blanka = new sprite('img/blanka.gif', 'img/blanka-reverse.gif', 120, 200);		
+		$scope.blanka.idleWidth = 70;
+		$scope.blanka.idleX = 0;
+		$scope.blanka.idleY = 0;
+		
+		$scope.ryu = new sprite('img/ryu.gif', 'img/ryu.gif', 100, 10);
+		$scope.ryu.idleWidth = 50;
+		$scope.ryu.idleX = 0;
+		$scope.ryu.idleY = 0;
+		$scope.ryu.punchWidth = 75;
+		$scope.ryu.punchY = 114;
+		$scope.ryu.punchX = 167;
 	}
 	
 	$scope.punch = function(attacker, defender) {
+		attacker.setState('PUNCHING');
 		if ($scope.detectCollision(attacker, defender)) {
 			defender.health -= 5;
+		}
+	}
+	
+	$scope.runArtificialIntelligence = function() {
+		if ($scope.blanka.x + $scope.blanka.width() > $scope.ryu.x && $scope.blanka.orientation == 'FORWARD' && !$scope.detectCollision($scope.ryu, $scope.blanka)) {
+			$scope.blanka.orientation = 'BACKWARD';
+		}
+		else if ($scope.blanka.x < $scope.ryu.x + $scope.ryu.width() && $scope.blanka.orientation == 'BACKWARD' && !$scope.detectCollision($scope.ryu, $scope.blanka)) {
+			$scope.blanka.orientation = 'FORWARD';
 		}
 	}
 	
@@ -71,6 +92,7 @@ gameApp.controller('gameController', ['$scope', '$timeout', function($scope, $ti
 		$scope.draw();
 		$scope.blanka.incrementFrame();
 		$scope.ryu.incrementFrame();
+		$scope.runArtificialIntelligence();
 		
 		$scope.lastUpdated = now;		
 		$timeout($scope.update, 1000 / framesPerSecond);

@@ -15,7 +15,24 @@
 </head>
 <body ng-controller="gameController" ng-keydown="keydown($event)">
 
-	<canvas id="gameCanvas" style="background:#333;"></canvas>
+	<div style="width:300px;"> 
+		<div style="float:left; width:40%;">
+			Player:
+			<div class="progress">
+			  <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="max-width:100%; width: {{ryu.health / 100 * 100}}%;"></div>
+			</div>
+		</div>
+		<div style="float:right; width:40%;">
+			A.I.:
+			<div class="progress">
+			  <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="max-width:100%; width: {{blanka.health / 100 * 100}}%;"></div>
+			</div>
+		</div>
+		
+		<canvas id="gameCanvas" style="background:#333;"></canvas>
+		
+		<p>Keys: LEFT, RIGHT, X to punch</p>
+	</div>
 	
 </body>
 </html>

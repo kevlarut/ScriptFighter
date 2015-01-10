@@ -17,15 +17,20 @@ gameApp.controller('gameController', ['$scope', '$timeout', function($scope, $ti
 		$scope.ryu.render(context);		
 	}
 	
+	$scope.detectCollision = function(spriteA, spriteB) {
+		return spriteA.x + spriteA.width >= spriteB.x && spriteA.x <= spriteB.x + spriteB.width;
+	}
+	
 	$scope.keydown = function(event) {
 		
-		var x = $scope.ryu.positionX;
-		var y = $scope.ryu.positionY;
+		var x = $scope.ryu.x;
+		var y = $scope.ryu.y;
 		
 		var KEY_LEFT = 37;
 		var KEY_UP = 38;
 		var KEY_RIGHT = 39;
 		var KEY_DOWN = 40;
+		var KEY_X = 88;
 			
 		switch (event.keyCode) {
 			case KEY_LEFT:
@@ -36,15 +41,25 @@ gameApp.controller('gameController', ['$scope', '$timeout', function($scope, $ti
 				x += 10;
 				event.preventDefault();
 				break;
+			case KEY_X:
+				$scope.punch($scope.ryu, $scope.blanka);
+				event.preventDefault();
+				break;			
 		}
 		
-		$scope.ryu.positionX = x;
-		$scope.ryu.positionY = y;
+		$scope.ryu.x = x;
+		$scope.ryu.y = y;
 	};
 	
 	$scope.load = function() {
 		$scope.blanka = new sprite('img/blanka.gif', 70, 120, 200);
 		$scope.ryu = new sprite('img/ryu.gif', 50, 100, 10);
+	}
+	
+	$scope.punch = function(attacker, defender) {
+		if ($scope.detectCollision(attacker, defender)) {
+			defender.health -= 5;
+		}
 	}
 	
 	$scope.update = function() {		
